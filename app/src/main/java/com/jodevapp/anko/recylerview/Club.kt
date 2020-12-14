@@ -7,4 +7,4 @@ import kotlinx.android.parcel.Parcelize
  * Created by jodevapp on 8/29/18.
  */
 @Parcelize
-data class Club (val name: String?, val image: Int?, val desc: String?): Parcelable
+data class Club (val id : String, val name: String?, val image: Int?, val desc: String?): Parcelable

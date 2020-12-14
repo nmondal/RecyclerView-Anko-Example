@@ -1,8 +1,9 @@
 package com.jodevapp.anko.recylerview
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.jodevapp.anko.recylerview.R.array.*
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                 layoutManager = LinearLayoutManager(context)
                 adapter = RecyclerViewAdapter(context, clubs) {
                     startActivity<SecondActivity>("clubBundle" to it)
-                }
+                } as RecyclerView.Adapter<*>
             }
         }
     }
@@ -38,8 +39,12 @@ class MainActivity : AppCompatActivity() {
         val clubImage = resources.obtainTypedArray(club_image)
         val clubDesc = resources.getStringArray(club_desc)
         clubs.clear()
-        for (i in clubName.indices) {
-            clubs.add(Club(clubName[i], clubImage.getResourceId(i, 0), clubDesc[i]))
+        for ( inx in 0..1000) {
+            for (i in clubName.indices) {
+                val id = "${inx}_${i}"
+                val name = "${id}_${clubName[i]}"
+                clubs.add(Club(id, name, clubImage.getResourceId(i, 0), clubDesc[i]))
+            }
         }
         //Recycle the typed array
         clubImage.recycle()

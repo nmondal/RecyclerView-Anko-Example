@@ -1,8 +1,8 @@
 package com.jodevapp.anko.recylerview
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import org.jetbrains.anko.*
 
@@ -13,7 +13,7 @@ class SecondActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val club: Club = intent.getParcelableExtra("clubBundle")
+        val club: Club = intent.getParcelableExtra("clubBundle")!!
 
         verticalLayout {
             lparams(matchParent, wrapContent)
