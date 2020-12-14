@@ -19,7 +19,8 @@ class NMSRecyclerViewAdapter(private val context: Context, private val tree: VTr
     }
 
     override fun onBindViewHolder(holder: NodeViewHolder, position: Int) {
-        holder.bindItem(nodes[position], listener)
+        val visibleNodes = nodes.filter { it.visible }
+        holder.bindItem(visibleNodes[position], listener)
     }
 
     override fun getItemCount(): Int = nodes.size
@@ -31,7 +32,11 @@ class NMSRecyclerViewAdapter(private val context: Context, private val tree: VTr
 
         fun bindItem(item: TreeNode, listener: (TreeNode) -> Unit) {
             checkBox.text = item.displayName
-            containerView.setOnClickListener { listener(item) }
+            when ( item.selectionState ){
+                SelectionState.Checked -> checkBox.isChecked = true
+                SelectionState.UnChecked -> checkBox.isChecked = false
+                else -> { }
+            }
         }
     }
 

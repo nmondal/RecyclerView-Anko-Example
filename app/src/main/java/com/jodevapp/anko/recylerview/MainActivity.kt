@@ -10,6 +10,7 @@ import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.verticalLayout
 import org.jetbrains.anko.wrapContent
+import java.security.SecureRandom
 
 /**
  * Created by jodevapp on 8/29/18.
@@ -36,8 +37,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun initData() : VTree {
         val vTree = VTree()
+        val r = SecureRandom()
+        val checked = if ( r.nextBoolean() ){
+            SelectionState.Checked
+        } else {
+            SelectionState.UnChecked
+        }
         val roots = (1..1000).map {
-            TreeNode( it.toString(), it.toString(), it, null, emptyList(), SelectionState.UnChecked, true )
+            TreeNode( it.toString(), it.toString(), it, null, emptyList(), checked, r.nextBoolean() )
         }
         vTree.roots = roots
         return vTree
