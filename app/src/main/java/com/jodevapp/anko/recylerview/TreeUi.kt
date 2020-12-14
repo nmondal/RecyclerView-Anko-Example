@@ -10,14 +10,13 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.custom.ankoView
 
 /**
- * Created by jodevapp on 8/29/18.
+ * Noga
  */
 class TreeUi : AnkoComponent<ViewGroup> {
 
     companion object {
         const val tvName = 1
         const val ivImage = 2
-        const val checkId = 3
 
         inline fun ViewManager.checkBox3(init: (@AnkoViewDslMarker CheckBox3).() -> Unit): CheckBox3 {
             return ankoView({ CheckBox3(it) }, 0, init)
@@ -31,8 +30,15 @@ class TreeUi : AnkoComponent<ViewGroup> {
             lparams(matchParent, wrapContent)
             padding = dip(16)
 
-            checkBox3 {
-                id = checkId
+            checkBox {
+                id = tvName
+                textSize = 16f
+                //setChecked(false,true)
+                //setCycle(intArrayOf(1, 0, 1, 0))
+            }.lparams {
+                height = wrapContent
+                width = dip(200)
+                gravity = Gravity.CENTER
             }
 
             imageView {
@@ -41,14 +47,6 @@ class TreeUi : AnkoComponent<ViewGroup> {
                 height = dip(40)
                 width = dip(40)
                 gravity = Gravity.CENTER
-            }
-
-            textView {
-                id = tvName
-                textSize = 16f
-            }.lparams {
-                gravity = Gravity.CENTER
-                margin = dip(10)
             }
         }
     }

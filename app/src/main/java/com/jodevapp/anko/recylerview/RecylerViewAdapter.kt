@@ -3,6 +3,7 @@ package com.jodevapp.anko.recylerview
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -30,15 +31,13 @@ class RecyclerViewAdapter(private val context: Context, private val clubs: List<
     class ViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
             LayoutContainer {
 
-        var tvName: TextView = itemView.findViewById(TreeUi.tvName)
         var ivImage: ImageView = itemView.findViewById(TreeUi.ivImage)
-        var checkBox: CheckBox3 = itemView.findViewById(TreeUi.checkId)
+        var checkBox: CheckBox = itemView.findViewById(TreeUi.tvName)
 
         fun bindItem(items: Club, listener: (Club) -> Unit) {
-            tvName.text = items.name
             checkBox.text = items.name
             Glide.with(containerView).load(items.image).into(ivImage)
-            containerView.setOnClickListener { listener(items) }
+            ivImage.setOnClickListener { listener(items) }
         }
     }
 }
