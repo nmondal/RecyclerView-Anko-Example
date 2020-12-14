@@ -8,10 +8,10 @@ import kotlinx.android.extensions.LayoutContainer
 import org.jetbrains.anko.AnkoContext
 
 
-class NMSRecyclerViewAdapter(private val context: Context, private val tree: VTree, private val listener: (TreeNode) -> Unit)
+class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: VTree<T>, private val listener: (TreeNode<T>) -> Unit)
     : RecyclerView.Adapter<NMSRecyclerViewAdapter.NodeViewHolder>() {
 
-    private val nodes: List<TreeNode> = tree.toList()
+    private val nodes: List<TreeNode<T>> = tree.toList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeViewHolder {
         return NodeViewHolder(TreeUi().createView(AnkoContext.create(context, parent)))
@@ -29,7 +29,7 @@ class NMSRecyclerViewAdapter(private val context: Context, private val tree: VTr
 
         var checkBox: CheckBoxTriStates = itemView.findViewById(TreeUi.checkBoxId)
 
-        fun bindItem(item: TreeNode, listener: (TreeNode) -> Unit) {
+        fun <T> bindItem(item: TreeNode<T>, listener: (TreeNode<T>) -> Unit) {
             checkBox.text = item.displayName
             checkBox.setState(item.selectionState.value)
         }

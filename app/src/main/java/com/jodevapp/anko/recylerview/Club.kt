@@ -9,28 +9,28 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Club(val id: String, val name: String?, val image: Int?, val desc: String?) : Parcelable
 
-data class TreeNode(
+data class TreeNode<T>(
         val id: String,
         val displayName: String,
-        val value: Any?,
-        val parent: TreeNode?,
-        val children: List<TreeNode>,
+        val value: T?,
+        val parent: TreeNode<T>?,
+        val children: List<TreeNode<T>>,
         var selectionState: CheckBoxTriStates.Companion.SelectionState,
         var visible: Boolean,
         var d: Int = 0
 )
 
-data class VTree(
-        var roots: List<TreeNode> = emptyList()
+data class VTree<T>(
+        var roots: List<TreeNode<T>> = emptyList()
 )
 
-fun VTree.toList(): List<TreeNode> {
-    fun list(node: TreeNode, depth: Int, accList: MutableList<TreeNode>) {
+fun <T> VTree<T>.toList(): List<TreeNode<T>> {
+    fun list(node: TreeNode<T>, depth: Int, accList: MutableList<TreeNode<T>>) {
         node.d = depth
         accList.add(node)
         node.children.forEach { child -> list(child, depth + 1, accList) }
     }
-    val l = mutableListOf<TreeNode>()
+    val l = mutableListOf<TreeNode<T>>()
     roots.forEach { child -> list(child, 0, l) }
     return l
 }

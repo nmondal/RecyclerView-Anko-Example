@@ -17,7 +17,7 @@ import java.security.SecureRandom
  */
 class MainActivity : AppCompatActivity() {
 
-    private val tree: VTree = initData()
+    private val tree: VTree<String> = initData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initData() : VTree {
-        val vTree = VTree()
+    private fun initData() : VTree<String> {
+        val vTree = VTree<String>()
         val r = SecureRandom()
         val checked = when ( r.nextInt(3) ){
             0 -> CheckBoxTriStates.Companion.SelectionState.UnChecked
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         val roots = (1..1000).map {
             TreeNode( it.toString(), it.toString(), it, null, emptyList(), checked, r.nextBoolean() )
         }
-        vTree.roots = roots
+        vTree.roots = roots as List<TreeNode<String>>
         return vTree
     }
 }
