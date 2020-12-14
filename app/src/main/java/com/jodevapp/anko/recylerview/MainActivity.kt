@@ -16,7 +16,7 @@ import org.jetbrains.anko.wrapContent
  */
 class MainActivity : AppCompatActivity() {
 
-    private var clubs: MutableList<Club> = mutableListOf()
+    private val tree: VTree = initData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,26 +27,19 @@ class MainActivity : AppCompatActivity() {
 
             recyclerView {
                 layoutManager = LinearLayoutManager(context)
-                adapter = RecyclerViewAdapter(context, clubs) {
-                    startActivity<SecondActivity>("clubBundle" to it)
-                } as RecyclerView.Adapter<*>
+                adapter = NMSRecyclerViewAdapter(context, tree) {
+                    //startActivity<SecondActivity>("clubBundle" to it)
+                }
             }
         }
     }
 
-    private fun initData() {
-        val clubName = resources.getStringArray(club_name)
-        val clubImage = resources.obtainTypedArray(club_image)
-        val clubDesc = resources.getStringArray(club_desc)
-        clubs.clear()
-        for ( inx in 0..1000) {
-            for (i in clubName.indices) {
-                val id = "${inx}_${i}"
-                val name = "${id}_${clubName[i]}"
-                clubs.add(Club(id, name, clubImage.getResourceId(i, 0), clubDesc[i]))
-            }
+    private fun initData() : VTree {
+        val vTree = VTree()
+        val roots = (1..1000).map {
+            TreeNode( it.toString(), it.toString(), it, null, emptyList(), SelectionState.UnChecked, true )
         }
-        //Recycle the typed array
-        clubImage.recycle()
+        vTree.roots = roots
+        return vTree
     }
 }

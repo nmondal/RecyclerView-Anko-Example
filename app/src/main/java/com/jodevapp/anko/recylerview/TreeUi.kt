@@ -15,8 +15,8 @@ import org.jetbrains.anko.custom.ankoView
 class TreeUi : AnkoComponent<ViewGroup> {
 
     companion object {
-        const val tvName = 1
-        const val ivImage = 2
+        const val checkBoxId = 1
+        const val buttonId = 2
 
         inline fun ViewManager.checkBox3(init: (@AnkoViewDslMarker CheckBox3).() -> Unit): CheckBox3 {
             return ankoView({ CheckBox3(it) }, 0, init)
@@ -31,7 +31,7 @@ class TreeUi : AnkoComponent<ViewGroup> {
             padding = dip(16)
 
             checkBox {
-                id = tvName
+                id = checkBoxId
                 textSize = 16f
                 //setChecked(false,true)
                 //setCycle(intArrayOf(1, 0, 1, 0))
@@ -42,7 +42,7 @@ class TreeUi : AnkoComponent<ViewGroup> {
             }
 
             imageView {
-                id = ivImage
+                id = buttonId
             }.lparams {
                 height = dip(40)
                 width = dip(40)

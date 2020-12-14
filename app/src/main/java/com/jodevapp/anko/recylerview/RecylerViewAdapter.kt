@@ -31,8 +31,8 @@ class RecyclerViewAdapter(private val context: Context, private val clubs: List<
     class ViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
             LayoutContainer {
 
-        var ivImage: ImageView = itemView.findViewById(TreeUi.ivImage)
-        var checkBox: CheckBox = itemView.findViewById(TreeUi.tvName)
+        var ivImage: ImageView = itemView.findViewById(ClubUi.ivImage)
+        var checkBox: CheckBox = itemView.findViewById(ClubUi.tvName)
 
         fun bindItem(items: Club, listener: (Club) -> Unit) {
             checkBox.text = items.name
