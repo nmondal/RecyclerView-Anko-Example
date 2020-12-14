@@ -9,20 +9,13 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Club(val id: String, val name: String?, val image: Int?, val desc: String?) : Parcelable
 
-
-enum class SelectionState {
-    UnChecked,
-    Indeterminate,
-    Checked
-}
-
 data class TreeNode(
         val id: String,
         val displayName: String,
         val value: Any?,
         val parent: TreeNode?,
         val children: List<TreeNode>,
-        var selectionState: SelectionState,
+        var selectionState: CheckBoxTriStates.Companion.SelectionState,
         var visible: Boolean,
         var d: Int = 0
 )
