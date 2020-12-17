@@ -24,19 +24,29 @@ class CheckBoxTriStates : AppCompatCheckBox {
 
     private var state = 0
 
+    var auto3State  = true
+
     /**
      * This is the listener set to the super class which is going to be evoke each
      * time the check state has changed.
      */
     private val privateListener: OnCheckedChangeListener = OnCheckedChangeListener { buttonView, isChecked ->
 
-        // checkbox status is changed from uncheck to checked.
-        when (state) {
-            UNKNOWN -> {
-                setState(UNCHECKED)
+        if ( auto3State ){
+            // checkbox status is changed from uncheck to checked.
+            when (state) {
+                UNKNOWN -> {
+                    setState(UNCHECKED)
+                }
+                UNCHECKED -> setState(CHECKED)
+                CHECKED -> setState(UNKNOWN)
             }
-            UNCHECKED -> setState(CHECKED)
-            CHECKED -> setState(UNKNOWN)
+        } else {
+            when (state) {
+                UNCHECKED -> setState(CHECKED)
+                CHECKED -> setState(UNCHECKED)
+                else -> {}
+            }
         }
     }
 
