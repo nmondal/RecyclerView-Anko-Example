@@ -71,7 +71,7 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
         }
 
         fun <T> bindItem(item: TreeNode<T>, listener: (TreeNode<T>) -> Unit) {
-            checkBox.auto3State = false
+            checkBox.auto3State = item.children.isNotEmpty()
             checkBoxes[item.id] = checkBox
             checkBox.text = item.displayName
             checkBox.layoutParams.leftMargin = item.d * 80
