@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jodevapp.anko.recylerview.R.array.*
+import org.jetbrains.anko.dip
+import org.jetbrains.anko.editText
 import org.jetbrains.anko.matchParent
+import org.jetbrains.anko.padding
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.verticalLayout
@@ -25,7 +28,11 @@ class MainActivity : AppCompatActivity() {
 
         verticalLayout {
             lparams(matchParent, wrapContent)
-
+            val searchText= editText {
+                padding = dip(16)
+                maxLines = 1
+                minLines = 1
+            }.lparams(matchParent, wrapContent)
             recyclerView {
                 layoutManager = LinearLayoutManager(context)
                 adapter = NMSRecyclerViewAdapter(context, tree) {
@@ -47,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             }
             pNode
         }
-        vTree.roots = roots as List<TreeNode<String>>
+        vTree.roots = roots
         return vTree
     }
 }
