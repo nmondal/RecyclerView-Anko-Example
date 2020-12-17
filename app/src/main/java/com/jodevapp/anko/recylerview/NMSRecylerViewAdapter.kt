@@ -14,7 +14,7 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
     : RecyclerView.Adapter<NMSRecyclerViewAdapter.NodeViewHolder>() {
 
     private val nodes: List<TreeNode<T>> = tree.toList()
-    private val checkBoxes : MutableMap<String,CheckBoxTriStates> = mutableMapOf()
+    private val checkBoxes: MutableMap<String, CheckBoxTriStates> = mutableMapOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeViewHolder {
         return NodeViewHolder(TreeUi().createView(AnkoContext.create(context, parent)), checkBoxes)
@@ -29,20 +29,24 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
     override fun getItemCount(): Int = nodes.size
 
     class NodeViewHolder(override val containerView: View,
-                         private val checkBoxes: MutableMap<String,CheckBoxTriStates>) : RecyclerView.ViewHolder(containerView),
+                         private val checkBoxes: MutableMap<String, CheckBoxTriStates>) : RecyclerView.ViewHolder(containerView),
             LayoutContainer {
 
         private var checkBox: CheckBoxTriStates = itemView.findViewById(TreeUi.checkBoxId)
 
         private fun propagateParent(treeNode: TreeNode<*>) {
-
+            treeNode.parent?.let { parent ->
+                parent.selectionState = treeNode.selectionState
+                checkBoxes[parent.id]?.let { it.selectionState = checkBox.selectionState }
+                propagateParent(parent)
+            }
         }
 
         private fun propagateChild(treeNode: TreeNode<*>) {
             treeNode.children.forEach { child ->
                 child.selectionState = treeNode.selectionState
                 checkBoxes[child.id]?.let { it.selectionState = checkBox.selectionState }
-                propagateChild( child)
+                propagateChild(child)
             }
         }
 
@@ -50,15 +54,15 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
             checkBox.tag?.let { any ->
                 val tNode = any as TreeNode<*>
                 tNode.selectionState = checkBox.selectionState
-                if ( checkBox.selectionState !=
-                        CheckBoxTriStates.Companion.SelectionState.Indeterminate ){
+                if (checkBox.selectionState !=
+                        CheckBoxTriStates.Companion.SelectionState.Indeterminate) {
                     propagateChild(tNode)
                 }
                 propagateParent(tNode)
             }
         }
 
-        fun <T> bindItem(item: TreeNode<T>, listener: (TreeNode<T>) -> Unit)  {
+        fun <T> bindItem(item: TreeNode<T>, listener: (TreeNode<T>) -> Unit) {
             checkBox.auto3State = false
             checkBoxes[item.id] = checkBox
             checkBox.text = item.displayName
