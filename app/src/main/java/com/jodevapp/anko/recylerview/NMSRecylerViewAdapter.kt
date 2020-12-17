@@ -30,12 +30,21 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
     class NodeViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
             LayoutContainer {
 
-        var checkBox: CheckBoxTriStates = itemView.findViewById(TreeUi.checkBoxId)
+        private var checkBox: CheckBoxTriStates = itemView.findViewById(TreeUi.checkBoxId)
+
+        private val onClick = View.OnClickListener {
+            checkBox.tag?.let {
+                val tNode = it as TreeNode<*>
+                print(tNode.id)
+            }
+        }
 
         fun <T> bindItem(item: TreeNode<T>, listener: (TreeNode<T>) -> Unit) {
             checkBox.text = item.displayName
             checkBox.layoutParams.leftMargin = item.d * 80
             checkBox.setState(item.selectionState.value)
+            checkBox.tag = item
+            checkBox.setOnClickListener(onClick)
         }
     }
 }
