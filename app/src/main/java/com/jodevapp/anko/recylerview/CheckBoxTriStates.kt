@@ -5,6 +5,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.ViewManager
+import android.widget.LinearLayout
 import androidx.annotation.Nullable
 import androidx.appcompat.widget.AppCompatCheckBox
 import org.jetbrains.anko.AnkoViewDslMarker
@@ -62,6 +63,9 @@ class CheckBoxTriStates : AppCompatCheckBox {
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         init()
     }
+
+    val layoutParams : LinearLayout.LayoutParams
+        get() = (this.getLayoutParams() as LinearLayout.LayoutParams)
 
     fun getState(): Int {
         return state

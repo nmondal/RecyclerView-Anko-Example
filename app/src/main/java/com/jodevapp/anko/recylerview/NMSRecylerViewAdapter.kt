@@ -3,9 +3,11 @@ package com.jodevapp.anko.recylerview
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import org.jetbrains.anko.AnkoContext
+import org.jetbrains.anko.leftPadding
 
 
 class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: VTree<T>, private val listener: (TreeNode<T>) -> Unit)
@@ -18,7 +20,8 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
     }
 
     override fun onBindViewHolder(holder: NodeViewHolder, position: Int) {
-        val visibleNodes = nodes.filter { it.visible }
+        val visibleNodes = nodes.filter {  true /* it.visible */ }
+        if ( position >= visibleNodes.size ) return
         holder.bindItem(visibleNodes[position], listener)
     }
 
@@ -31,8 +34,8 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
 
         fun <T> bindItem(item: TreeNode<T>, listener: (TreeNode<T>) -> Unit) {
             checkBox.text = item.displayName
+            checkBox.layoutParams.leftMargin = item.d * 80
             checkBox.setState(item.selectionState.value)
         }
     }
-
 }

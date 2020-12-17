@@ -13,8 +13,8 @@ data class TreeNode<T>(
         val id: String,
         val displayName: String,
         val value: T?,
-        val parent: TreeNode<T>?,
-        val children: List<TreeNode<T>>,
+        var parent: TreeNode<T>?,
+        var children: List<TreeNode<T>>,
         var selectionState: CheckBoxTriStates.Companion.SelectionState,
         var visible: Boolean,
         var d: Int = 0

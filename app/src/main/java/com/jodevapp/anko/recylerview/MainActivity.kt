@@ -38,13 +38,24 @@ class MainActivity : AppCompatActivity() {
     private fun initData() : VTree<String> {
         val vTree = VTree<String>()
         val r = SecureRandom()
-        val roots = (1..1000).map {
+        val roots = (1..3).map { parent->
             val checked = when ( r.nextInt(3) ){
                 0 -> CheckBoxTriStates.Companion.SelectionState.UnChecked
                 1 -> CheckBoxTriStates.Companion.SelectionState.Checked
                 else -> CheckBoxTriStates.Companion.SelectionState.Indeterminate
             }
-            TreeNode( it.toString(), it.toString(), it, null, emptyList(), checked, r.nextBoolean() )
+            val id = parent.toString()
+            val pNode = TreeNode( id, id, id, null, emptyList(), checked, r.nextBoolean() )
+            pNode.children = (1..5).map { child ->
+                val checked = when ( r.nextInt(3) ){
+                    0 -> CheckBoxTriStates.Companion.SelectionState.UnChecked
+                    1 -> CheckBoxTriStates.Companion.SelectionState.Checked
+                    else -> CheckBoxTriStates.Companion.SelectionState.Indeterminate
+                }
+                val id = "$parent-$child"
+                TreeNode( id, id, id, pNode , emptyList(), checked, r.nextBoolean() )
+            }
+            pNode
         }
         vTree.roots = roots as List<TreeNode<String>>
         return vTree
