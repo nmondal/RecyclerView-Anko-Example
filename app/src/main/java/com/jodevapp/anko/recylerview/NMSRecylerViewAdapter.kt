@@ -36,8 +36,16 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
 
         private fun propagateParent(treeNode: TreeNode<*>) {
             treeNode.parent?.let { parent ->
-                parent.selectionState = treeNode.selectionState
-                checkBoxes[parent.id]?.let { it.selectionState = checkBox.selectionState }
+                // are all my siblings same state ?
+                val found = parent.children.find { sibling ->
+                    sibling.selectionState != treeNode.selectionState
+                }
+                parent.selectionState  = if ( found != null ){
+                    CheckBoxTriStates.Companion.SelectionState.Indeterminate
+                } else {
+                    treeNode.selectionState
+                }
+                checkBoxes[parent.id]?.let { it.selectionState = parent.selectionState }
                 propagateParent(parent)
             }
         }

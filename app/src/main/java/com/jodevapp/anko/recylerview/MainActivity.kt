@@ -45,10 +45,10 @@ class MainActivity : AppCompatActivity() {
     private fun initData() : VTree<String> {
         val vTree = VTree<String>()
         val checked = CheckBoxTriStates.Companion.SelectionState.UnChecked
-        val roots = (1..3).map { parent->
+        val roots = (1..100).map { parent->
             val id = parent.toString()
             val pNode = TreeNode( id, id, id, null, emptyList(), checked , true )
-            pNode.children = (1..5).map { child ->
+            pNode.children = (1..500).map { child ->
                 val id = "$parent-$child"
                 TreeNode( id, id, id, pNode , emptyList(), checked, true )
             }
