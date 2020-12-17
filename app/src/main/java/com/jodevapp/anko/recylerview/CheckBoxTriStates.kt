@@ -71,6 +71,19 @@ class CheckBoxTriStates : AppCompatCheckBox {
         return state
     }
 
+    var selectionState : SelectionState
+       get() {
+           return when (state) {
+               UNCHECKED -> SelectionState.UnChecked
+               CHECKED -> SelectionState.Checked
+               else -> SelectionState.Indeterminate
+           }
+       }
+       set(value) {
+           this.state = value.value
+           updateBtn()
+       }
+
     fun setState(state: Int) {
         if (!restoring && this.state != state) {
             this.state = state

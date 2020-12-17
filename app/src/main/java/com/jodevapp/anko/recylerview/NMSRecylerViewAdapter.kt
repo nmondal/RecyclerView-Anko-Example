@@ -35,14 +35,14 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
         private val onClick = View.OnClickListener {
             checkBox.tag?.let {
                 val tNode = it as TreeNode<*>
-                print(tNode.id)
+                print(checkBox.selectionState)
             }
         }
 
         fun <T> bindItem(item: TreeNode<T>, listener: (TreeNode<T>) -> Unit) {
             checkBox.text = item.displayName
             checkBox.layoutParams.leftMargin = item.d * 80
-            checkBox.setState(item.selectionState.value)
+            checkBox.selectionState = item.selectionState
             checkBox.tag = item
             checkBox.setOnClickListener(onClick)
         }
