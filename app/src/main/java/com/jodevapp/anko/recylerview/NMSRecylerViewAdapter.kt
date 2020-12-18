@@ -6,7 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.checkBox
+import com.jodevapp.anko.recylerview.NMSItemUI.Companion.expanded
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.imageButton
+import com.jodevapp.anko.recylerview.NMSItemUI.Companion.toggle
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.visibleRecycler
 import kotlinx.android.extensions.LayoutContainer
 import org.jetbrains.anko.AnkoContext
@@ -71,12 +73,11 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
             propagateParent(tNode)
         }
 
-        private fun changeVisibility( node : TreeNode<*> , visibility : Boolean ){
-
-        }
-
         private val buttonOnClick = View.OnClickListener {
-
+            itemView.toggle()
+            tNode.children.forEach { immediateChild ->
+                cachedViews[ immediateChild.id]?.visibleRecycler = itemView.expanded
+            }
         }
 
         fun <T> bindItem(item: TreeNode<T>, listener: (TreeNode<T>) -> Unit) {

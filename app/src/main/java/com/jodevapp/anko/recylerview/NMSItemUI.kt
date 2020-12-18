@@ -75,7 +75,7 @@ class NMSItemUI : AnkoComponent<ViewGroup> {
             }
             imageView {
                 id = buttonId
-                imageResource = R.drawable.ic_baseline_arrow_drop_up_24
+                imageResource = R.drawable.ic_baseline_arrow_drop_down_24
                 tag = false
 
             }.lparams {
