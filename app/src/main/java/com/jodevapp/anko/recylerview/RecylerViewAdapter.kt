@@ -17,7 +17,7 @@ class RecyclerViewAdapter(private val context: Context, private val clubs: List<
     : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(TreeUi().createView(AnkoContext.create(context, parent)))
+        return ViewHolder(NMSItemUI().createView(AnkoContext.create(context, parent)))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

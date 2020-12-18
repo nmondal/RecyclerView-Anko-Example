@@ -10,7 +10,7 @@ import org.jetbrains.anko.*
 /**
  * Noga
  */
-class TreeUi : AnkoComponent<ViewGroup> {
+class NMSItemUI : AnkoComponent<ViewGroup> {
 
     companion object {
         const val checkBoxId = 1
@@ -35,10 +35,11 @@ class TreeUi : AnkoComponent<ViewGroup> {
 
             imageView {
                 id = buttonId
+                imageResource = R.drawable.ic_baseline_arrow_drop_up_24
             }.lparams {
                 height = dip(40)
                 width = dip(40)
-                gravity = Gravity.CENTER
+                gravity = Gravity.END
             }
         }
     }
