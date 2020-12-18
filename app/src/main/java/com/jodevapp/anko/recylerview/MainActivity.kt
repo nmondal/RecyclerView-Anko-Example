@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         val roots = (1..100).map { parent->
             val id = parent.toString()
             val pNode = TreeNode( id, id, id, null, emptyList(), checked , true )
-            pNode.children = (1..500).map { child ->
+            pNode.children = (1..100).map { child ->
                 val id = "$parent-$child"
                 TreeNode( id, id, id, pNode , emptyList(), checked, true )
             }
