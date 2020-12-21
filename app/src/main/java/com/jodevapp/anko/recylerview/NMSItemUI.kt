@@ -33,27 +33,6 @@ class NMSItemUI : AnkoComponent<ViewGroup> {
             }
         }
 
-        var View.visibleRecycler : Boolean
-            get() {
-                return layoutParams.height != 0
-            }
-            set(value) {
-                if ( value ){
-                    tag?.let {
-                        val old = it as Pair<*, *>
-                        layoutParams.height = old.first as Int
-                        layoutParams.width = old.second as Int
-                        requestLayout()
-                    }
-                }else{
-                    val old = Pair( layoutParams.height, layoutParams.width)
-                    layoutParams.height = 0
-                    layoutParams.width = 0
-                    tag = old
-                }
-                //requestLayout()
-            }
-
     }
 
     override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
