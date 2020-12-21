@@ -15,8 +15,9 @@ data class TreeNode<T>(
         val value: T?,
         var parent: TreeNode<T>?,
         var children: List<TreeNode<T>>,
-        var selectionState: CheckBoxTriStates.Companion.SelectionState,
-        var visible: Boolean = true ,
+        var selectionState: CheckBoxTriStates.Companion.SelectionState
+        = CheckBoxTriStates.Companion.SelectionState.UnChecked,
+        var visible: Boolean = children.isNotEmpty(),
         var expanded: Boolean = false, //TODO is there a better way ?
         var d: Int = 0 // TODO is there a better way ?
 )
@@ -31,6 +32,7 @@ fun <T> VTree<T>.toList(): List<TreeNode<T>> {
         accList.add(node)
         node.children.forEach { child -> list(child, depth + 1, accList) }
     }
+
     val l = mutableListOf<TreeNode<T>>()
     roots.forEach { child -> list(child, 0, l) }
     return l
