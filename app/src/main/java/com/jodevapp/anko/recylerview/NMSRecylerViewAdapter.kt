@@ -1,15 +1,27 @@
 package com.jodevapp.anko.recylerview
 
+import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.checkBox
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.imageButton
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.toggle
 import kotlinx.android.extensions.LayoutContainer
 import org.jetbrains.anko.AnkoContext
+import org.jetbrains.anko.AnkoViewDslMarker
+import org.jetbrains.anko.custom.ankoView
+import org.jetbrains.anko.dip
+import org.jetbrains.anko.editText
+import org.jetbrains.anko.matchParent
+import org.jetbrains.anko.padding
+import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.jetbrains.anko.verticalLayout
+import org.jetbrains.anko.wrapContent
 
 
 class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: VTree<T>, private val listener: (TreeNode<T>) -> Unit)
@@ -104,4 +116,24 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
             checkBox.setOnClickListener(checkBoxOnClick)
         }
     }
+}
+
+inline fun <T> Activity.nmsControl(tree: VTree<T>, init: (@AnkoViewDslMarker LinearLayout).( ) -> Unit): LinearLayout {
+    return ankoView({
+        verticalLayout {
+            lparams(matchParent, wrapContent)
+            val searchText= editText {
+                padding = dip(16)
+                maxLines = 1
+                minLines = 1
+
+            }.lparams(matchParent, wrapContent)
+            recyclerView {
+                layoutManager = LinearLayoutManager(context)
+                adapter = NMSRecyclerViewAdapter(context, tree) {
+
+                }
+            }
+        }
+    }, 0, init)
 }
