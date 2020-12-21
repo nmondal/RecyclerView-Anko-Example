@@ -46,6 +46,7 @@ class NMSItemUI : AnkoComponent<ViewGroup> {
                         val old = it as Pair<*, *>
                         layoutParams.height = old.first as Int
                         layoutParams.width = old.second as Int
+                        requestLayout()
                     }
                 }else{
                     val old = Pair( layoutParams.height, layoutParams.width)

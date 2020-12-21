@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.checkBox
-import com.jodevapp.anko.recylerview.NMSItemUI.Companion.expanded
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.imageButton
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.toggle
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.visibleRecycler
@@ -20,8 +19,12 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
     private val nodes: List<TreeNode<T>> = tree.toList()
     private val cachedViews: MutableMap<String, View> = mutableMapOf()
 
+    init {
+        nodes.forEach { it.visible = it.d == 0 }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeViewHolder {
-        return NodeViewHolder(NMSItemUI().createView(AnkoContext.create(context, parent)), cachedViews)
+        return NodeViewHolder(NMSItemUI().createView(AnkoContext.create(context, parent)), this)
     }
 
     override fun onBindViewHolder(holder: NodeViewHolder, position: Int) {
@@ -33,7 +36,7 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
     override fun getItemCount(): Int = nodes.size
 
     class NodeViewHolder(override val containerView: View,
-                         private val cachedViews: MutableMap<String, View>) : RecyclerView.ViewHolder(containerView),
+                         private val nmsAdapter: NMSRecyclerViewAdapter<*>) : RecyclerView.ViewHolder(containerView),
             LayoutContainer {
 
         private var checkBox: CheckBoxTriStates = itemView.checkBox
@@ -51,7 +54,7 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
                 } else {
                     treeNode.selectionState
                 }
-                cachedViews[parent.id]?.let { it.checkBox.selectionState = parent.selectionState }
+                nmsAdapter.cachedViews[parent.id]?.let { it.checkBox.selectionState = parent.selectionState }
                 propagateParent(parent)
             }
         }
@@ -59,7 +62,7 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
         private fun propagateChild(treeNode: TreeNode<*>) {
             treeNode.children.forEach { child ->
                 child.selectionState = treeNode.selectionState
-                cachedViews[child.id]?.let { it.checkBox.selectionState = checkBox.selectionState }
+                nmsAdapter.cachedViews[child.id]?.let { it.checkBox.selectionState = checkBox.selectionState }
                 propagateChild(child)
             }
         }
@@ -75,9 +78,11 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
 
         private val buttonOnClick = View.OnClickListener {
             itemView.toggle()
+            /*
             tNode.children.forEach { immediateChild ->
                 cachedViews[ immediateChild.id]?.visibleRecycler = itemView.expanded
             }
+            */
         }
 
         fun <T> bindItem(item: TreeNode<T>, listener: (TreeNode<T>) -> Unit) {
@@ -89,12 +94,12 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
                 checkBox.auto3State = false
                 button.visibility = View.GONE
             }
-            cachedViews[item.id] = itemView
+            nmsAdapter.cachedViews[item.id] = itemView
             checkBox.text = item.displayName
             checkBox.layoutParams.leftMargin = item.d * 80
             checkBox.selectionState = item.selectionState
             // make only directs visible
-            itemView.visibleRecycler = ( item.d == 0 )
+            //itemView.visibleRecycler = ( item.d == 0 )
             checkBox.setOnClickListener(checkBoxOnClick)
             button.setOnClickListener(buttonOnClick)
         }
