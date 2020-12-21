@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,7 +25,7 @@ import org.jetbrains.anko.verticalLayout
 import org.jetbrains.anko.wrapContent
 
 
-class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: VTree<T>, private val listener: (TreeNode<T>) -> Unit)
+class NMSRecyclerViewAdapter<T>(private val context: Context,private val searchText : EditText, tree: VTree<T>)
     : RecyclerView.Adapter<NMSRecyclerViewAdapter.NodeViewHolder>() {
 
     private val nodes: List<TreeNode<T>> = tree.toList()
@@ -41,7 +42,7 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
     override fun onBindViewHolder(holder: NodeViewHolder, position: Int) {
         val visibleNodes = nodes.filter { it.visible }
         if (position >= visibleNodes.size) return
-        holder.bindItem(visibleNodes[position], listener)
+        holder.bindItem(visibleNodes[position])
     }
 
     override fun getItemCount(): Int = nodes.size
@@ -96,7 +97,7 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
             nmsAdapter.notifyDataSetChanged()
         }
 
-        fun <T> bindItem(item: TreeNode<T>, listener: (TreeNode<T>) -> Unit) {
+        fun <T> bindItem(item: TreeNode<T>) {
             tNode = item
             if (item.children.isNotEmpty()) {
                 checkBox.auto3State = true
@@ -130,9 +131,7 @@ inline fun <T> Activity.nmsControl(tree: VTree<T>, init: (@AnkoViewDslMarker Lin
             }.lparams(matchParent, wrapContent)
             recyclerView {
                 layoutManager = LinearLayoutManager(context)
-                adapter = NMSRecyclerViewAdapter(context, tree) {
-
-                }
+                adapter = NMSRecyclerViewAdapter(context, searchText, tree)
             }
         }
     }, 0, init)
