@@ -2,6 +2,8 @@ package com.jodevapp.anko.recylerview
 
 import android.app.Activity
 import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -25,14 +27,45 @@ import org.jetbrains.anko.verticalLayout
 import org.jetbrains.anko.wrapContent
 
 
-class NMSRecyclerViewAdapter<T>(private val context: Context,private val searchText : EditText, tree: VTree<T>)
+class NMSRecyclerViewAdapter<T>(private val context: Context, searchText : EditText, tree: VTree<T>)
     : RecyclerView.Adapter<NMSRecyclerViewAdapter.NodeViewHolder>() {
 
     private val nodes: List<TreeNode<T>> = tree.toList()
     private val cachedViews: MutableMap<String, View> = mutableMapOf()
 
+    private fun resetNodeVisibility(){
+        nodes.forEach {
+            it.visible = it.d == 0
+            it.expanded = false
+        }
+    }
+
+    inner class NMSTextWatcher : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+
+        override fun afterTextChanged(s: Editable?) {
+            val text = s.toString()
+            if ( text.isEmpty() ){
+                resetNodeVisibility()
+            } else {
+                nodes.forEach {
+                    it.visible = it.displayName.contains(text, true)
+                }
+                nodes.filter { it.visible }.forEach { it.parent?.let { p -> p.visible = true } }
+            }
+            this@NMSRecyclerViewAdapter.notifyDataSetChanged()
+        }
+    }
+
     init {
-        nodes.forEach { it.visible = it.d == 0 }
+        resetNodeVisibility()
+        if ( nodes.size < 10 ) {
+            searchText.visibility = View.GONE
+        } else {
+            searchText.addTextChangedListener(NMSTextWatcher())
+            searchText.visibility = View.VISIBLE
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeViewHolder {
