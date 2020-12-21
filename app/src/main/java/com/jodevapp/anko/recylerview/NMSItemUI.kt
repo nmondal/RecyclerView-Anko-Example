@@ -23,10 +23,7 @@ class NMSItemUI : AnkoComponent<ViewGroup> {
         val View.checkBox : CheckBoxTriStates
             get() = findViewById(checkBoxId)
 
-        val View.expanded : Boolean
-            get() = imageButton.tag == true
-
-        fun View.toggle( ) {
+        fun View.toggle( expanded: Boolean) {
             imageButton.imageResource = if ( expanded ) {
                 imageButton.tag = false
                 R.drawable.ic_baseline_arrow_drop_down_24

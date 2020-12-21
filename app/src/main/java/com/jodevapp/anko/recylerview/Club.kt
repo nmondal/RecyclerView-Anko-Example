@@ -16,8 +16,9 @@ data class TreeNode<T>(
         var parent: TreeNode<T>?,
         var children: List<TreeNode<T>>,
         var selectionState: CheckBoxTriStates.Companion.SelectionState,
-        var visible: Boolean,
-        var d: Int = 0
+        var visible: Boolean = true ,
+        var expanded: Boolean = false, //TODO is there a better way ?
+        var d: Int = 0 // TODO is there a better way ?
 )
 
 data class VTree<T>(

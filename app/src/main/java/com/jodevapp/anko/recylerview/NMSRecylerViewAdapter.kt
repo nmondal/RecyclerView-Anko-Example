@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.checkBox
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.imageButton
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.toggle
-import com.jodevapp.anko.recylerview.NMSItemUI.Companion.visibleRecycler
 import kotlinx.android.extensions.LayoutContainer
 import org.jetbrains.anko.AnkoContext
 
@@ -77,12 +76,12 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
         }
 
         private val buttonOnClick = View.OnClickListener {
-            itemView.toggle()
-            /*
+            tNode.expanded = !tNode.expanded
+            itemView.toggle( tNode.expanded )
             tNode.children.forEach { immediateChild ->
-                cachedViews[ immediateChild.id]?.visibleRecycler = itemView.expanded
+                immediateChild.visible = tNode.expanded
             }
-            */
+            nmsAdapter.notifyDataSetChanged()
         }
 
         fun <T> bindItem(item: TreeNode<T>, listener: (TreeNode<T>) -> Unit) {
@@ -90,9 +89,11 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
             if (item.children.isNotEmpty()) {
                 checkBox.auto3State = true
                 button.visibility = View.VISIBLE
+                button.setOnClickListener(buttonOnClick)
             } else {
                 checkBox.auto3State = false
                 button.visibility = View.GONE
+                button.setOnClickListener(null)
             }
             nmsAdapter.cachedViews[item.id] = itemView
             checkBox.text = item.displayName
@@ -101,7 +102,6 @@ class NMSRecyclerViewAdapter<T>(private val context: Context, private val tree: 
             // make only directs visible
             //itemView.visibleRecycler = ( item.d == 0 )
             checkBox.setOnClickListener(checkBoxOnClick)
-            button.setOnClickListener(buttonOnClick)
         }
     }
 }
