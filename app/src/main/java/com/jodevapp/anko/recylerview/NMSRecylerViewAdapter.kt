@@ -23,6 +23,7 @@ import org.jetbrains.anko.editText
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.padding
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.jetbrains.anko.singleLine
 import org.jetbrains.anko.verticalLayout
 import org.jetbrains.anko.wrapContent
 
@@ -160,7 +161,7 @@ inline fun <T> Activity.nmsControl(tree: VTree<T>, init: (@AnkoViewDslMarker Lin
                 padding = dip(16)
                 maxLines = 1
                 minLines = 1
-
+                singleLine = true
             }.lparams(matchParent, wrapContent)
             recyclerView {
                 layoutManager = LinearLayoutManager(context)
