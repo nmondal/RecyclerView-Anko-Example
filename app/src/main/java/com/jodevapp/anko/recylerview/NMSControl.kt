@@ -48,10 +48,11 @@ data class VTree<T>(
         var roots: List<TreeNode<T>> = emptyList()
 )
 
-fun <T> VTree<T>.toList(): List<TreeNode<T>> {
+fun <T> VTree<T>.toList( nodeIdMap : MutableMap<String,TreeNode<T>>): List<TreeNode<T>> {
     fun list(node: TreeNode<T>, depth: Int, accList: MutableList<TreeNode<T>>) {
         node.d = depth
         accList.add(node)
+        nodeIdMap[node.id] = node
         node.children.forEach { child -> list(child, depth + 1, accList) }
     }
 
@@ -63,12 +64,17 @@ fun <T> VTree<T>.toList(): List<TreeNode<T>> {
 internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchText: EditText, tree: VTree<T>)
     : RecyclerView.Adapter<NMSRecyclerViewAdapter.NodeViewHolder>() {
 
-    private val nodes: List<TreeNode<T>> = tree.toList()
+    private val nodeIds: MutableMap<String,TreeNode<T>> = mutableMapOf()
+    private val nodes: List<TreeNode<T>> = tree.toList(nodeIds)
     private val cachedViews: MutableMap<String, View> = mutableMapOf()
 
     internal fun resetView(){
         cachedViews.clear()
         notifyDataSetChanged()
+    }
+
+    private fun expandSelection( node : TreeNode<T> ){
+
     }
 
     var selectionIds: List<String>
@@ -79,9 +85,7 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
             }.map { it.id }
         }
         set(value) {
-            value.forEach {  id ->
-
-            }
+            value.forEach { expandSelection( nodeIds[it]!!) }
         }
 
     private fun resetNodeVisibility() {
@@ -202,8 +206,6 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
             checkBox.text = item.displayName
             checkBox.layoutParams.leftMargin = item.d * 80
             checkBox.selectionState = item.selectionState
-            // make only directs visible
-            //itemView.visibleRecycler = ( item.d == 0 )
             checkBox.setOnClickListener(checkBoxOnClick)
         }
     }
