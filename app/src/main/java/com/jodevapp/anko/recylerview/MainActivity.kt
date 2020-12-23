@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initData()
-        nmsControl(tree){ }
+        nmsControl(tree)
     }
 
     private fun initData() : VTree<String> {
