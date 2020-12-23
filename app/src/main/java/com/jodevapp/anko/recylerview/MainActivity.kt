@@ -28,7 +28,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initData()
-        nmsControl(tree)
+        val ctrl = nmsControl(tree)
+        ctrl.selectionIds = listOf("2", "3")
     }
 
     private fun initData() : VTree<String> {

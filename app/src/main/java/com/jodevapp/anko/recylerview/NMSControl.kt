@@ -66,6 +66,11 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
     private val nodes: List<TreeNode<T>> = tree.toList()
     private val cachedViews: MutableMap<String, View> = mutableMapOf()
 
+    internal fun resetView(){
+        cachedViews.clear()
+        notifyDataSetChanged()
+    }
+
     var selectionIds: List<String>
         get() {
             return nodes.filter {
@@ -74,7 +79,9 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
             }.map { it.id }
         }
         set(value) {
+            value.forEach {  id ->
 
+            }
         }
 
     private fun resetNodeVisibility() {
@@ -98,7 +105,8 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
                 }
                 nodes.filter { it.visible }.forEach { it.parent?.let { p -> p.visible = true } }
             }
-            this@NMSRecyclerViewAdapter.notifyDataSetChanged()
+            // TODO
+            this@NMSRecyclerViewAdapter.resetView()
         }
     }
 
@@ -171,12 +179,12 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
         }
 
         private val buttonOnClick = View.OnClickListener {
-            tNode.expanded = !tNode.expanded
             itemView.toggle(tNode.expanded)
+            tNode.expanded = !tNode.expanded
             tNode.children.forEach { immediateChild ->
                 immediateChild.visible = tNode.expanded
             }
-            nmsAdapter.notifyDataSetChanged()
+            nmsAdapter.resetView()
         }
 
         fun <T> bindItem(item: TreeNode<T>) {
@@ -213,8 +221,8 @@ internal class NMSItemUI : AnkoComponent<ViewGroup> {
         val View.checkBox : CheckBoxTriStates
             get() = findViewById(checkBoxId)
 
-        fun View.toggle( expanded: Boolean) {
-            imageButton.imageResource = if ( expanded ) {
+        fun View.toggle(currentStateIsExpanded: Boolean) {
+            imageButton.imageResource = if ( currentStateIsExpanded ) {
                 imageButton.tag = false
                 R.drawable.ic_baseline_arrow_drop_down_24
             }else {
@@ -287,8 +295,9 @@ class NMSControl( private val tree : VTree<*>) : AnkoComponent<Context> {
     }
 }
 
-fun <T> Activity.nmsControl(tree: VTree<T>) : View {
-    val view =  NMSControl(tree).createView(AnkoContext.create(this))
+fun <T> Activity.nmsControl(tree: VTree<T>) : NMSControl {
+    val ctrl = NMSControl(tree)
+    val view =  ctrl.createView(AnkoContext.create(this))
     this.setContentView(view)
-    return view
+    return ctrl
 }
