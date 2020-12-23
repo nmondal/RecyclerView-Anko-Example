@@ -21,7 +21,7 @@ import java.security.SecureRandom
  */
 class MainActivity : AppCompatActivity() {
 
-    private val maxItems = 80
+    private val maxItems = 3
 
     private val tree: VTree<String> = initData()
 

@@ -116,13 +116,18 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
         return NodeViewHolder(NMSItemUI().createView(AnkoContext.create(context, parent)), this)
     }
 
+    private val visibleNodes : List<TreeNode<*>>
+        get() {
+            return nodes.filter { it.visible }
+        }
+
     override fun onBindViewHolder(holder: NodeViewHolder, position: Int) {
-        val visibleNodes = nodes.filter { it.visible }
-        if (position >= visibleNodes.size) return
         holder.bindItem(visibleNodes[position])
     }
 
-    override fun getItemCount(): Int = nodes.size
+    override fun getItemCount(): Int {
+        return visibleNodes.size
+    }
 
     class NodeViewHolder(override val containerView: View,
                          private val nmsAdapter: NMSRecyclerViewAdapter<*>) : RecyclerView.ViewHolder(containerView),
