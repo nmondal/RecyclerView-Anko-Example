@@ -21,7 +21,8 @@ import java.security.SecureRandom
  */
 class MainActivity : AppCompatActivity() {
 
-    private val maxItems = 3
+    // TOTAL items would be maxItems^3
+    private val maxItems = 20 // so this is 8000 items
 
     private val tree: VTree<String> = initData()
 
