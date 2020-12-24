@@ -210,6 +210,11 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
             tNode.expanded = !tNode.expanded
             tNode.children.forEach { immediateChild ->
                 immediateChild.visible = tNode.expanded
+                if(immediateChild.expanded && !tNode.expanded){
+                    immediateChild.children.forEach { immediateGrandChild ->
+                        immediateGrandChild.visible = tNode.expanded
+                    }
+                }
             }
             nmsAdapter.resetView()
         }
