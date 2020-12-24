@@ -48,7 +48,7 @@ data class VTree<T>(
         var roots: List<TreeNode<T>> = emptyList()
 )
 
-fun <T> VTree<T>.toList( nodeIdMap : MutableMap<String,TreeNode<T>>): List<TreeNode<T>> {
+internal fun <T> VTree<T>.toList( nodeIdMap : MutableMap<String,TreeNode<T>>): List<TreeNode<T>> {
     fun list(node: TreeNode<T>, depth: Int, accList: MutableList<TreeNode<T>>) {
         node.d = depth
         accList.add(node)
@@ -74,7 +74,30 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
     }
 
     private fun expandSelection( node : TreeNode<T> ){
-
+        // set me up
+        node.selectionState =  CheckBoxTriStates.Companion.SelectionState.Checked
+        // set all children up
+        node.children.filter {
+            it.selectionState != CheckBoxTriStates.Companion.SelectionState.Checked
+        }.forEach {
+            expandSelection(it)
+        }
+        val parent = node.parent
+        if ( parent == null || parent.selectionState
+                == CheckBoxTriStates.Companion.SelectionState.Checked){
+            return
+        }
+        // now, here ...
+        // are all my siblings same state ?
+        val found = parent.children.find { sibling ->
+            sibling.selectionState != CheckBoxTriStates.Companion.SelectionState.Checked
+        }
+        if ( found != null ){
+            parent.selectionState = CheckBoxTriStates.Companion.SelectionState.Indeterminate
+        } else {
+            parent.selectionState = CheckBoxTriStates.Companion.SelectionState.Checked
+            expandSelection(parent)
+        }
     }
 
     var selectionIds: List<String>

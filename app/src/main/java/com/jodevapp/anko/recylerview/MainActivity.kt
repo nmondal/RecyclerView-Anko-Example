@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initData()
         val ctrl = nmsControl(tree)
-        ctrl.selectionIds = listOf("2", "3")
+        ctrl.selectionIds = listOf("2-1", "3-2", "1-3")
     }
 
     private fun initData() : VTree<String> {
@@ -39,8 +39,14 @@ class MainActivity : AppCompatActivity() {
             val id = parent.toString()
             val pNode = TreeNode( id, id, id, null, emptyList(), checked , true )
             pNode.children = (1..maxItems).map { child ->
-                val id = "$parent-$child"
-                TreeNode( id, id, id, pNode , emptyList(), checked, true )
+                val cid = "$parent-$child"
+                val cNode = TreeNode( cid, cid, cid, pNode , emptyList(), checked, true )
+                cNode.children = ( 1..maxItems).map { gchild ->
+                    val gcid = "$parent-$child-$gchild"
+                    TreeNode( gcid, gcid, gcid, cNode , emptyList(), checked, true )
+                }
+
+                cNode
             }
             pNode
         }
