@@ -23,6 +23,7 @@ import org.jetbrains.anko.dip
 import org.jetbrains.anko.editText
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.imageView
+import org.jetbrains.anko.linearLayout
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.padding
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -265,7 +266,7 @@ internal class NMSItemUI : AnkoComponent<ViewGroup> {
 
     override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
 
-        verticalLayout {
+        linearLayout {
             this.orientation = LinearLayout.HORIZONTAL
             lparams(matchParent, wrapContent)
             padding = dip(16)
@@ -275,8 +276,9 @@ internal class NMSItemUI : AnkoComponent<ViewGroup> {
                 textSize = 16f
             }.lparams {
                 height = wrapContent
-                width = dip(200)
-                gravity = Gravity.CENTER
+                width = dip(0)
+                weight = 9.0f
+                gravity = Gravity.START
             }
             imageView {
                 id = buttonId
@@ -285,7 +287,8 @@ internal class NMSItemUI : AnkoComponent<ViewGroup> {
 
             }.lparams {
                 height = dip(40)
-                width = dip(40)
+                width = dip(0)
+                weight = 1.0f
                 gravity = Gravity.END
             }
         }
