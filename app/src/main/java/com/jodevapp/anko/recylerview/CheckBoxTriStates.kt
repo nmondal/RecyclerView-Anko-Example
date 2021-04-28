@@ -1,6 +1,7 @@
 package com.jodevapp.anko.recylerview
 
 import android.content.Context
+import android.graphics.PorterDuff
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -32,20 +33,17 @@ class CheckBoxTriStates : AppCompatCheckBox {
      */
     private val privateListener: OnCheckedChangeListener = OnCheckedChangeListener { buttonView, isChecked ->
 
-        if ( auto3State ){
+        if (auto3State) {
             // checkbox status is changed from uncheck to checked.
             when (state) {
-                UNKNOWN -> {
-                    setState(UNCHECKED)
-                }
+                UNKNOWN -> setState(UNCHECKED)
                 UNCHECKED -> setState(CHECKED)
-                CHECKED -> setState(UNKNOWN)
+                CHECKED -> setState(UNCHECKED)
             }
         } else {
             when (state) {
                 UNCHECKED -> setState(CHECKED)
                 CHECKED -> setState(UNCHECKED)
-                else -> {}
             }
         }
     }
@@ -145,6 +143,7 @@ class CheckBoxTriStates : AppCompatCheckBox {
             CHECKED -> btnDrawable = R.drawable.ic_check_box_24px
         }
         setButtonDrawable(btnDrawable)
+        buttonTintMode = PorterDuff.Mode.DST
     }
 
     internal class SavedState : BaseSavedState {

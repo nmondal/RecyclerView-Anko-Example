@@ -2,19 +2,6 @@ package com.jodevapp.anko.recylerview
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.jodevapp.anko.recylerview.R.array.*
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.editText
-import org.jetbrains.anko.linearLayout
-import org.jetbrains.anko.matchParent
-import org.jetbrains.anko.padding
-import org.jetbrains.anko.recyclerview.v7.recyclerView
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.verticalLayout
-import org.jetbrains.anko.wrapContent
-import java.security.SecureRandom
 
 /**
  * Created by jodevapp on 8/29/18.
@@ -30,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initData()
         val ctrl = nmsControl(tree)
-        ctrl.selectionIds = listOf("2-1", "3-2", "1-3")
+        ctrl.selectionIds = listOf("2-1", "3-2", "1-3", "4")
     }
 
     private fun initData() : VTree<String> {

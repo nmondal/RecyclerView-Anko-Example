@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jodevapp.anko.recylerview.CheckBoxTriStates.Companion.checkBox3
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.checkBox
 import com.jodevapp.anko.recylerview.NMSItemUI.Companion.imageButton
-import com.jodevapp.anko.recylerview.NMSItemUI.Companion.toggle
 import kotlinx.android.extensions.LayoutContainer
 import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.AnkoContext
@@ -23,6 +22,7 @@ import org.jetbrains.anko.dip
 import org.jetbrains.anko.editText
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.imageView
+import org.jetbrains.anko.leftPadding
 import org.jetbrains.anko.linearLayout
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.padding
@@ -40,9 +40,9 @@ data class TreeNode<T>(
         var children: List<TreeNode<T>>,
         var selectionState: CheckBoxTriStates.Companion.SelectionState
         = CheckBoxTriStates.Companion.SelectionState.UnChecked,
-        var visible: Boolean = children.isNotEmpty(),
-        var expanded: Boolean = false, //TODO is there a better way ?
-        var d: Int = 0 // TODO is there a better way ?
+        var visible: Boolean = false,
+        var expanded: Boolean = false,
+        var d: Int = 0
 )
 
 data class VTree<T>(
@@ -62,17 +62,11 @@ internal fun <T> VTree<T>.toList( nodeIdMap : MutableMap<String,TreeNode<T>>): L
     return l
 }
 
-internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchText: EditText, tree: VTree<T>)
+internal class NMSRecyclerViewAdapter<T>(private val context: Context, private val searchText: EditText, tree: VTree<T>)
     : RecyclerView.Adapter<NMSRecyclerViewAdapter.NodeViewHolder>() {
 
     private val nodeIds: MutableMap<String,TreeNode<T>> = mutableMapOf()
     private val nodes: List<TreeNode<T>> = tree.toList(nodeIds)
-    private val cachedViews: MutableMap<String, View> = mutableMapOf()
-
-    internal fun resetView(){
-        cachedViews.clear()
-        notifyDataSetChanged()
-    }
 
     private fun expandSelection( node : TreeNode<T> ){
         // set me up
@@ -119,23 +113,58 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
         }
     }
 
+    private fun updateExpansion(node: TreeNode<*>, position: Int) {
+        val text = searchText.text.toString()
+        val childrenToUpdate = when {
+            !node.expanded && text.isEmpty() -> node.children
+            else -> node.children.filter { it.displayName.contains(text, true) }
+        }
+        var count = 0
+        for (child in childrenToUpdate) {
+            if (!node.expanded) {
+                count += getVisibleCountAndHide(child)
+            }
+            child.visible = node.expanded
+        }
+        if (node.expanded) {
+            this.notifyItemChanged(position)
+            this.notifyItemRangeInserted(position + 1, childrenToUpdate.size)
+        } else {
+            this.notifyItemChanged(position)
+            this.notifyItemRangeRemoved(position + 1, count)
+        }
+    }
+
+    private fun getVisibleCountAndHide(node: TreeNode<*>): Int = if (node.visible) {
+        node.visible = false
+        node.expanded = false
+        1 + node.children.sumBy { getVisibleCountAndHide(it) }
+    } else 0
+
+    private fun updateExpansion(text: String) {
+        if (text.isEmpty()) {
+            resetNodeVisibility()
+        } else {
+            // First set visibility
+            for (node in nodes) {
+                node.visible = node.displayName.contains(text, true)
+            }
+            nodes.filter { it.visible }.forEach { propagateVisible(it) }
+            // Set expansion state based on visibility of children
+            nodes.forEach { node -> node.expanded = node.children.find { it.visible } != null }
+        }
+        this.notifyDataSetChanged()
+    }
+
+    private fun propagateVisible(treeNode: TreeNode<*>) {
+        treeNode.visible = true
+        treeNode.parent?.let { propagateVisible(it) }
+    }
+
     inner class NMSTextWatcher : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-
-        override fun afterTextChanged(s: Editable?) {
-            val text = s.toString()
-            if (text.isEmpty()) {
-                resetNodeVisibility()
-            } else {
-                nodes.forEach {
-                    it.visible = it.displayName.contains(text, true)
-                }
-                nodes.filter { it.visible }.forEach { it.parent?.let { p -> p.visible = true } }
-            }
-            // TODO
-            this@NMSRecyclerViewAdapter.resetView()
-        }
+        override fun afterTextChanged(s: Editable?) = updateExpansion(s.toString())
     }
 
     init {
@@ -173,8 +202,9 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
         private var button: ImageView = itemView.imageButton
         private lateinit var tNode: TreeNode<*>
 
-        private fun propagateParent(treeNode: TreeNode<*>) {
+        private fun propagateParent(treeNode: TreeNode<*>, position: Int) {
             treeNode.parent?.let { parent ->
+                val parentPosition = position - (parent.children.filter { it.visible }.indexOf(treeNode) + 1)
                 // are all my siblings same state ?
                 val found = parent.children.find { sibling ->
                     sibling.selectionState != treeNode.selectionState
@@ -184,40 +214,33 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
                 } else {
                     treeNode.selectionState
                 }
-                nmsAdapter.cachedViews[parent.id]?.let { it.checkBox.selectionState = parent.selectionState }
-                propagateParent(parent)
+                propagateParent(parent, parentPosition)
+                nmsAdapter.notifyItemChanged(parentPosition)
             }
         }
 
-        private fun propagateChild(treeNode: TreeNode<*>) {
+        private fun propagateChild(treeNode: TreeNode<*>): Int {
+            var updatedCount = 0
             treeNode.children.forEach { child ->
                 child.selectionState = treeNode.selectionState
-                nmsAdapter.cachedViews[child.id]?.let { it.checkBox.selectionState = checkBox.selectionState }
-                propagateChild(child)
+                if (child.visible) updatedCount++
+                updatedCount += propagateChild(child)
             }
+            return updatedCount
         }
 
         private val checkBoxOnClick = View.OnClickListener {
             tNode.selectionState = checkBox.selectionState
-            if (checkBox.selectionState !=
-                    CheckBoxTriStates.Companion.SelectionState.Indeterminate) {
-                propagateChild(tNode)
+            if (checkBox.selectionState != CheckBoxTriStates.Companion.SelectionState.Indeterminate) {
+                val updatedCount = propagateChild(tNode)
+                nmsAdapter.notifyItemRangeChanged(adapterPosition, 1 + updatedCount)
             }
-            propagateParent(tNode)
+            propagateParent(tNode, adapterPosition)
         }
 
         private val buttonOnClick = View.OnClickListener {
-            itemView.toggle(tNode.expanded)
             tNode.expanded = !tNode.expanded
-            tNode.children.forEach { immediateChild ->
-                immediateChild.visible = tNode.expanded
-                if(immediateChild.expanded && !tNode.expanded){
-                    immediateChild.children.forEach { immediateGrandChild ->
-                        immediateGrandChild.visible = tNode.expanded
-                    }
-                }
-            }
-            nmsAdapter.resetView()
+            nmsAdapter.updateExpansion(tNode, adapterPosition)
         }
 
         fun <T> bindItem(item: TreeNode<T>) {
@@ -231,8 +254,13 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
                 button.visibility = View.GONE
                 button.setOnClickListener(null)
             }
-            nmsAdapter.cachedViews[item.id] = itemView
             checkBox.text = item.displayName
+            if (item.expanded) {
+                button.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24)
+            } else {
+                button.setImageResource(R.drawable.ic_baseline_arrow_drop_down_24)
+            }
+            button.tag = item.expanded
             checkBox.layoutParams.leftMargin = item.d * 80
             checkBox.selectionState = item.selectionState
             checkBox.setOnClickListener(checkBoxOnClick)
@@ -241,7 +269,6 @@ internal class NMSRecyclerViewAdapter<T>(private val context: Context, searchTex
 }
 
 internal class NMSItemUI : AnkoComponent<ViewGroup> {
-
     companion object {
         private const val checkBoxId = 1
         private const val buttonId = 2
@@ -251,17 +278,6 @@ internal class NMSItemUI : AnkoComponent<ViewGroup> {
 
         val View.checkBox : CheckBoxTriStates
             get() = findViewById(checkBoxId)
-
-        fun View.toggle(currentStateIsExpanded: Boolean) {
-            imageButton.imageResource = if ( currentStateIsExpanded ) {
-                imageButton.tag = false
-                R.drawable.ic_baseline_arrow_drop_down_24
-            }else {
-                imageButton.tag = true
-                R.drawable.ic_baseline_arrow_drop_up_24
-            }
-        }
-
     }
 
     override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
@@ -274,6 +290,7 @@ internal class NMSItemUI : AnkoComponent<ViewGroup> {
             checkBox3 {
                 id = checkBoxId
                 textSize = 16f
+                leftPadding = dip(32)
             }.lparams {
                 height = wrapContent
                 width = dip(0)
@@ -284,12 +301,11 @@ internal class NMSItemUI : AnkoComponent<ViewGroup> {
                 id = buttonId
                 imageResource = R.drawable.ic_baseline_arrow_drop_down_24
                 tag = false
-
             }.lparams {
-                height = dip(40)
+                height = dip(24)
                 width = dip(0)
                 weight = 1.0f
-                gravity = Gravity.END
+                gravity = Gravity.CENTER
             }
         }
     }
@@ -308,7 +324,6 @@ class NMSControl( private val tree : VTree<*>) : AnkoComponent<Context> {
 
 
     override fun createView(ui: AnkoContext<Context>): View {
-
         return with(ui){
             verticalLayout {
                 lparams(matchParent, wrapContent)
